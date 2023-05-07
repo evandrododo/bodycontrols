@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import * as poseDetection from "@tensorflow-models/pose-detection";
 import "@tensorflow/tfjs-backend-webgl";
@@ -14,6 +14,7 @@ function App() {
     divRefs.current.push(useRef<HTMLDivElement>(null));
   }
   const refDetector = useRef<poseDetection.PoseDetector>();
+  const [showCamera, setShowCamera] = useState(false);
 
   const loadDetector = async () => {
     refDetector.current = await poseDetection.createDetector(
@@ -68,18 +69,18 @@ function App() {
           ? nextPosX
           : (1 - fluidity) * Number(previousPosX?.replace("px", "")) +
             fluidity * nextPosX;
-      const posY = 
+      const posY =
         previousPosY === ""
           ? nextPosY
           : (1 - fluidity) * Number(previousPosY?.replace("px", "")) +
             fluidity * nextPosY;
 
-      
       const previousOpacity = div?.style.getPropertyValue("opacity");
       const opacity =
         previousOpacity === ""
           ? pose.score
-          : (1 - fluidity) * Number(previousOpacity) + fluidity * (pose.score || 0);
+          : (1 - fluidity) * Number(previousOpacity) +
+            fluidity * (pose.score || 0);
 
       div?.style.setProperty("opacity", `${opacity}`);
       div?.style.setProperty("left", `${posX}px`);
@@ -120,9 +121,27 @@ function App() {
           muted
           ref={refVideo}
           style={{
-            opacity: 0,
+            opacity: showCamera ? 1 : 0,
           }}
         ></video>
+
+        <div
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            color: "white",
+            fontSize: 10,
+          }}
+        >
+          <button
+            onClick={() => {
+              setShowCamera(!showCamera);
+            }}
+          >
+            show camera
+          </button>
+        </div>
       </div>
     </>
   );
