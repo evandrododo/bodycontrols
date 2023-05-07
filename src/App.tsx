@@ -18,7 +18,7 @@ function App() {
 
   const loadDetector = async () => {
     refDetector.current = await poseDetection.createDetector(
-      poseDetection.SupportedModels.MoveNet
+      poseDetection.SupportedModels.PoseNet
     );
     console.log(refDetector.current);
   };

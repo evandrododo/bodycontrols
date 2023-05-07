@@ -10,6 +10,9 @@ export const PosePoint = forwardRef<
         position: "absolute",
         width: 10,
         height: 10,
+        top: Math.random() * window.innerHeight,
+        left: Math.random() * window.innerWidth,
+        opacity: 0.1,
         backgroundColor: backgroundColor,
         borderRadius: 5,
       }}
