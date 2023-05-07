@@ -122,6 +122,11 @@ function App() {
           ref={refVideo}
           style={{
             opacity: showCamera ? 1 : 0,
+            position: "absolute",
+            right: 0,
+            bottom: 0,
+            width: 160,
+            height: 120,
           }}
         ></video>
 
