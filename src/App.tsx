@@ -63,7 +63,7 @@ function App() {
       const previousPosY = div?.style.getPropertyValue("top");
       const nextPosX = normalizedX * window.innerWidth;
       const nextPosY = normalizedY * window.innerHeight;
-      const fluidity = 0.1;
+      const fluidity = 0.2;
       const posX =
         previousPosX === ""
           ? nextPosX
