@@ -1,55 +1,9 @@
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import "./App.css";
 import * as poseDetection from "@tensorflow-models/pose-detection";
 import "@tensorflow/tfjs-backend-webgl";
-
-const useFrameLoop = (callback: any) => {
-  const requestRef = useRef<number>();
-  const previousTimeRef = useRef<number>();
-
-  const animate = (time: number) => {
-    if (previousTimeRef.current !== undefined) {
-      const deltaTime = time - previousTimeRef.current;
-      callback(time, deltaTime);
-    }
-    previousTimeRef.current = time;
-    requestRef.current = requestAnimationFrame(animate);
-  };
-
-  useEffect(() => {
-    requestRef.current = requestAnimationFrame(animate);
-
-    return () => {
-      if (requestRef.current) {
-        cancelAnimationFrame(requestRef.current);
-      }
-    };
-  }, []);
-};
-
-const PosePoint = forwardRef(
-  (
-    {
-      backgroundColor,
-    }: {
-      backgroundColor: string;
-    },
-    ref: React.Ref<HTMLDivElement>
-  ) => {
-    return (
-      <div
-        style={{
-          position: "absolute",
-          width: 10,
-          height: 10,
-          backgroundColor: backgroundColor,
-          borderRadius: 5,
-        }}
-        ref={ref}
-      ></div>
-    );
-  }
-);
+import { PosePoint } from "./PosePoint";
+import { useFrameLoop } from "./useFrameLoop";
 
 function App() {
   const refVideo = useRef<HTMLVideoElement>(null);
@@ -100,41 +54,63 @@ function App() {
     }
     const newPoses = await refDetector.current?.estimatePoses(refVideo.current);
     for (let i = 0; i < 17; i++) {
+      const pose = newPoses?.[0].keypoints[i];
       const div = divRefs.current[i]?.current;
-      div?.style.setProperty(
-        "left",
-        `${newPoses?.[0].keypoints[i].x}px`
-      );
-      div?.style.setProperty(
-        "top",
-        `${newPoses?.[0].keypoints[i].y}px`
-      );
+      const normalizedX = pose.x / 640;
+      const normalizedY = pose.y / 480;
+      const previousPosX = div?.style.getPropertyValue("left");
+      const previousPosY = div?.style.getPropertyValue("top");
+      const nextPosX = normalizedX * window.innerWidth;
+      const nextPosY = normalizedY * window.innerHeight;
+      const fluidity = 0.1;
+      const posX =
+        previousPosX === ""
+          ? nextPosX
+          : (1 - fluidity) * Number(previousPosX?.replace("px", "")) +
+            fluidity * nextPosX;
+      const posY = 
+        previousPosY === ""
+          ? nextPosY
+          : (1 - fluidity) * Number(previousPosY?.replace("px", "")) +
+            fluidity * nextPosY;
+
+      
+      const previousOpacity = div?.style.getPropertyValue("opacity");
+      const opacity =
+        previousOpacity === ""
+          ? pose.score
+          : (1 - fluidity) * Number(previousOpacity) + fluidity * (pose.score || 0);
+
+      div?.style.setProperty("opacity", `${opacity}`);
+      div?.style.setProperty("left", `${posX}px`);
+      div?.style.setProperty("top", `${posY}px`);
     }
   };
 
   useFrameLoop(() => {
     estimatePoses();
   });
+
   return (
     <>
       <div>
-        <PosePoint backgroundColor={"#FF0000"} ref={divRefs.current[0]} />
-        <PosePoint backgroundColor={"#FFA500"} ref={divRefs.current[1]} />
-        <PosePoint backgroundColor={"#FFFF00"} ref={divRefs.current[2]} />
-        <PosePoint backgroundColor={"#A5FF00"} ref={divRefs.current[3]} />
-        <PosePoint backgroundColor={"#00FF00"} ref={divRefs.current[4]} />
+        <PosePoint backgroundColor={"#00FFFF"} ref={divRefs.current[0]} />
+        <PosePoint backgroundColor={"#00A5FF"} ref={divRefs.current[1]} />
+        <PosePoint backgroundColor={"#0000FF"} ref={divRefs.current[2]} />
+        <PosePoint backgroundColor={"#A500FF"} ref={divRefs.current[3]} />
+        <PosePoint backgroundColor={"#FF00FF"} ref={divRefs.current[4]} />
         <PosePoint backgroundColor={"#00FFA5"} ref={divRefs.current[5]} />
-        <PosePoint backgroundColor={"#00FFFF"} ref={divRefs.current[6]} />
+        <PosePoint backgroundColor={"#00FF00"} ref={divRefs.current[6]} />
         <PosePoint backgroundColor={"#00A5FF"} ref={divRefs.current[7]} />
         <PosePoint backgroundColor={"#0000FF"} ref={divRefs.current[8]} />
         <PosePoint backgroundColor={"#A500FF"} ref={divRefs.current[9]} />
         <PosePoint backgroundColor={"#FF00FF"} ref={divRefs.current[10]} />
         <PosePoint backgroundColor={"#FF00A5"} ref={divRefs.current[11]} />
         <PosePoint backgroundColor={"#FFA5A5"} ref={divRefs.current[12]} />
-        <PosePoint backgroundColor={"#A5A5FF"} ref={divRefs.current[13]} />
-        <PosePoint backgroundColor={"#A5FFFF"} ref={divRefs.current[14]} />
-        <PosePoint backgroundColor={"#A5FFA5"} ref={divRefs.current[15]} />
-        <PosePoint backgroundColor={"#FFFFA5"} ref={divRefs.current[16]} />
+        <PosePoint backgroundColor={"#FFA5A5"} ref={divRefs.current[13]} />
+        <PosePoint backgroundColor={"#FF00A5"} ref={divRefs.current[14]} />
+        <PosePoint backgroundColor={"#FFA500"} ref={divRefs.current[15]} />
+        <PosePoint backgroundColor={"#FF0000"} ref={divRefs.current[16]} />
 
         <video
           id="video"
