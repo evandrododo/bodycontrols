@@ -4,6 +4,7 @@ import * as poseDetection from "@tensorflow-models/pose-detection";
 import "@tensorflow/tfjs-backend-webgl";
 import { PosePoint } from "./PosePoint";
 import { useFrameLoop } from "./useFrameLoop";
+import { Canvas } from "@react-three/fiber";
 
 function App() {
   const refVideo = useRef<HTMLVideoElement>(null);
@@ -148,6 +149,13 @@ function App() {
           </button>
         </div>
       </div>
+      <Canvas>
+        <mesh position={[0, 0, 0]}>
+          <sphereGeometry args={[0.05, 32, 32]} />
+          <meshStandardMaterial color={"#FF0000"} />
+        </mesh>
+        <ambientLight />
+      </Canvas>
     </>
   );
 }
