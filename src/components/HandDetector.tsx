@@ -25,15 +25,11 @@ export const HandDetector = ({
 
   const loadDetector = async () => {
     const model = handDetection.SupportedModels.MediaPipeHands;
-    const detectorConfig = {
+    refDetector.current = await handDetection.createDetector(model, {
       runtime: "mediapipe", // or 'tfjs',
       solutionPath: "https://cdn.jsdelivr.net/npm/@mediapipe/hands",
       modelType: "full",
-    };
-    refDetector.current = await handDetection.createDetector(
-      model,
-      detectorConfig
-    );
+    });
 
     console.log(refDetector.current);
   };

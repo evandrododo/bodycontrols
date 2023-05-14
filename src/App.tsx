@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import { Canvas } from "@react-three/fiber";
-import { PoseDetector } from "./components/PoseDetector";
+// import { PoseDetector } from "./components/PoseDetector";
 import { HandDetector } from "./components/HandDetector";
 
 function App() {
