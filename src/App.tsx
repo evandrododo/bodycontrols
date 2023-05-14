@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import { Canvas } from "@react-three/fiber";
 import { PoseDetector } from "./components/PoseDetector";
+import { HandDetector } from "./components/HandDetector";
 
 function App() {
   const refVideo = useRef<HTMLVideoElement>(null);
@@ -30,7 +31,8 @@ function App() {
   return (
     <>
       <Canvas>
-        <PoseDetector refVideo={refVideo} />
+        {/* <PoseDetector refVideo={refVideo} /> */}
+        <HandDetector refVideo={refVideo}/>
         <ambientLight />
       </Canvas>
       <div>
