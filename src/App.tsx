@@ -30,7 +30,7 @@ function App() {
 
   return (
     <>
-      <Canvas>
+      <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 5] }}>
         {/* <PoseDetector refVideo={refVideo} /> */}
         <HandDetector refVideo={refVideo}/>
         <ambientLight />
