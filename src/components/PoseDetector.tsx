@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { PosePoint } from "./PosePoint";
 import { Mesh } from "three";
-import * as poseDetection from "@tensorflow-models/pose-detection";
+// import * as poseDetection from "@tensorflow-models/pose-detection";
 import "@tensorflow/tfjs-backend-webgl";
 import { useFrame } from "@react-three/fiber";
 
@@ -10,7 +10,8 @@ export const PoseDetector = ({
 }: {
   refVideo: React.MutableRefObject<HTMLVideoElement | null>;
 }) => {
-  const refDetector = useRef<poseDetection.PoseDetector>();
+  // const refDetector = useRef<poseDetection.PoseDetector>();
+  const refDetector = useRef<null>(null);
   const pointRefs = useRef<Array<React.MutableRefObject<Mesh | null>>>([]);
   for (let i = 0; i < 17; i++) {
     pointRefs.current.push(useRef<Mesh>(null));
@@ -24,9 +25,9 @@ export const PoseDetector = ({
   }, []);
 
   const loadDetector = async () => {
-    refDetector.current = await poseDetection.createDetector(
-      poseDetection.SupportedModels.PoseNet
-    );
+    // refDetector.current = await poseDetection.createDetector(
+    //   poseDetection.SupportedModels.PoseNet
+    // );
     console.log(refDetector.current);
   };
 
@@ -39,7 +40,11 @@ export const PoseDetector = ({
     ) {
       return;
     }
-    const newPoses = await refDetector.current?.estimatePoses(refVideo.current);
+    // const newPoses = await refDetector.current?.estimatePoses(refVideo.current);
+    const newPoses = [{keypoints: [ { 
+      x: 100,
+      y: 100,
+    } ]}];
     for (let i = 0; i < 17; i++) {
       const pose = newPoses?.[0].keypoints[i];
       const normalizedX = pose.x / 640;
